@@ -32,7 +32,7 @@ $itemSql = 'SELECT si.name, si.barcode, SUM(si.qty) AS qty, SUM(si.line_total) A
 $itemParams = [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'];
 if ($posId)     { $itemSql .= ' AND s.pos_id = ?'; $itemParams[] = $posId; }
 if ($cashierId) { $itemSql .= ' AND s.cashier_id = ?'; $itemParams[] = $cashierId; }
-$itemSql .= ' GROUP BY si.material_id ORDER BY total DESC';
+$itemSql .= ' GROUP BY si.material_id, si.name, si.barcode ORDER BY total DESC';
 $itemStmt = db()->prepare($itemSql);
 $itemStmt->execute($itemParams);
 $itemBreakdown = $itemStmt->fetchAll();
