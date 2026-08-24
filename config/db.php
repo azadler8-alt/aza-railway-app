@@ -26,6 +26,16 @@ function db(): PDO
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ]);
+
+            $tables = $pdo->query("SHOW TABLES LIKE 'users'")->fetchColumn();
+            if ($tables === false) {
+                $schemaPath = __DIR__ . '/../database/aza_schema.sql';
+                $schema = file_get_contents($schemaPath);
+                if ($schema === false || $pdo->exec($schema) === false) {
+                    throw new RuntimeException('دروستکردنی سکیمای داتابەیس سەرکەوتوو نەبوو.');
+                }
+            }
+
             $adminPassword = getenv('ADMIN_PASSWORD');
             if ($adminPassword !== false && $adminPassword !== '') {
                 $stmt = $pdo->query("SELECT password_hash FROM users WHERE username = 'admin' LIMIT 1");
